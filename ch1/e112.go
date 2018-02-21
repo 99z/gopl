@@ -1,5 +1,5 @@
 // Minimal web server that can read 'cycles' from a query string
-// and produce Lissajous figures accordingly
+// and produce Lissajous figures accordingly.
 package main
 
 import (

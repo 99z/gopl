@@ -1,6 +1,6 @@
 // Popcount provides the PopCount method
 // that determines population size of an integer with a loop
-// Checks the rightmost bit of x each iteration
+// Clears the rightmost nonzero bit each iteration
 package popcount
 
 var pc [256]byte
@@ -13,14 +13,11 @@ func init() {
 
 func PopCount(x uint64) int {
 	var result int
-	for i := uint64(0); i < 64; i++ {
-		// Test the value of the rightmost bit
-		if x&1 == 1{
-			result++
-		}
-
-		// Set x equal to x right bitshifted by 1
-		x >>= 1
+	// x will continually decreased  until 0 due to
+	// rightmost nonzero bit being cleared
+	for x != 0 {
+		x = x&(x-1)
+		result++
 	}
 	return result
 }

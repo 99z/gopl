@@ -14,7 +14,7 @@ const (
 	angle			= math.Pi / 6			// angle of x, y axes
 )
 
-var sin30, cos30 = math.Sin(angle), math.Cos(angle)
+var sin45, cos45 = math.Sin(angle), math.Cos(angle)
 
 func main() {
 	fmt.Printf("<svg xmlns='http://www.w3.org/2000/svg' "+
@@ -58,8 +58,8 @@ func corner(i, j int) (float64, float64) {
 	}
 
 	// Project x,y,z isometrically onto 2-D svg canvas sx,sy
-	sx := width / 2 + (x - y) * cos30 * xyscale
-	sy := height / 2 + (x - y) * sin30 * xyscale - z * zscale
+	sx := width / 2 + (x - y) * cos45 * xyscale
+	sy := height / 2 + (x - y) * sin45 * xyscale - z * zscale
 	return sx, sy
 }
 

@@ -27,6 +27,14 @@ func main() {
 			bx, by := corner(i, j)
 			cx, cy := corner(i, j + 1)
 			dx, dy := corner(i + 1, j + 1)
+
+			if (ax == 0 && ay == 0) ||
+			   (bx == 0 && by == 0) ||
+			   (cx == 0 && cy == 0) ||
+			   (dx == 0 && dy == 0) {
+				continue
+			}
+
 			fmt.Printf("<polygon points='%g,%g %g,%g %g,%g %g,%g' />\n",
 				ax, ay, bx, by, cx, cy, dx, dy)
 		}
@@ -42,6 +50,12 @@ func corner(i, j int) (float64, float64) {
 
 	// Compute surface height z
 	z := f(x, y)
+
+	// It might be better to return NaN instead of 0 here
+	// but would rather avoid using NaN at all
+	if (math.IsInf(z, 0)) {
+		return float64(0), float64(0)
+	}
 
 	// Project x,y,z isometrically onto 2-D svg canvas sx,sy
 	sx := width / 2 + (x - y) * cos30 * xyscale

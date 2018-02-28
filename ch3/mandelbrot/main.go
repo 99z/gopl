@@ -27,17 +27,26 @@ func main() {
 		y := float64(py) / height * (ymax - ymin) + ymin
 		for px := 0; px < width; px++ {
 			x := float64(px) / width * (xmax - xmin) + xmin
-			z := complex(x, y)
+
+			subPixels := []color.RGBA{}
+			for i := 0; i < 2; i++ {
+				for j := 0; j < 2; j++ {
+					// Now in four subpixels
+					z := complex(x+float64((i/4)), y+float64((j/4)))
+					subPixels = append(subPixels, mandelbrot(z))
+				}
+			}
 
 			// Image point px, py represents complex value z
-			img.Set(px, py, mandelbrot(z))
+			// Color is the average of subpixel RGBA
+			img.Set(px, py, getAverage(subPixels))
 		}
 	}
 
 	png.Encode(os.Stdout, img)
 }
 
-func mandelbrot(z complex128) color.Color {
+func mandelbrot(z complex128) color.RGBA {
 	const iterations = 200
 	const contrast = 15
 
@@ -49,5 +58,17 @@ func mandelbrot(z complex128) color.Color {
 		}
 	}
 
-	return color.Black
+	return color.RGBA{255, 255, 255, 255}
+}
+
+func getAverage(colors []color.RGBA) color.RGBA {
+	var r, g, b, a uint8
+	for _, color := range colors {
+		r += color.R
+		g += color.G
+		b += color.B
+		a += color.A
+	}
+
+	return color.RGBA{r / 4, g / 4, b / 4, a / 4}
 }

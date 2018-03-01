@@ -4,7 +4,7 @@ import (
 	"image"
 	"image/color"
 	"image/png"
-	"math/cmplx"
+	"math/big"
 	"os"
 )
 
@@ -32,8 +32,8 @@ func main() {
 			for i := 0; i < 2; i++ {
 				for j := 0; j < 2; j++ {
 					// Now in four subpixels
-					z := complex(x+float64((i/4)), y+float64((j/4)))
-					subPixels = append(subPixels, mandelbrot(z))
+					xs, ys := x+float64((i/4)), y+float64((j/4))
+					subPixels = append(subPixels, mandelbrot(xs, ys))
 				}
 			}
 
@@ -46,19 +46,27 @@ func main() {
 	png.Encode(os.Stdout, img)
 }
 
-func mandelbrot(z complex128) color.RGBA {
-	const iterations = 200
+func mandelbrot(x, y float64) color.RGBA {
+	// From Wikipedia's pseudocode for Mandelbrot set
+	// Calculates without the use of complex numbers
+	// Extremely slow compared to complex128
+	const iterations = 20
 	const contrast = 15
+	var n uint8 = 0
 
-	var v complex128
-	for n := uint8(0); n < iterations; n++ {
-		v = v*v + z
-		if cmplx.Abs(v) > 2 {
-			return palette[n%5]
-		}
+	bigX, _ := big.NewFloat(x).Rat(nil)
+	bigY, _ := big.NewFloat(y).Rat(nil)
+	x0 := big.NewRat(0.0, 1)
+	y0 := big.NewRat(0.0, 1)
+
+	for ; (&big.Rat{}).Add((&big.Rat{}).Mul(x0, x0), (&big.Rat{}).Mul(y0, y0)).Cmp(big.NewRat(4, 1)) == -1 && n < iterations; n++ {
+		xtemp := (&big.Rat{}).Add((&big.Rat{}).Sub((&big.Rat{}).Mul(x0, x0), (&big.Rat{}).Mul(y0, y0)), bigX)
+		y0 = (&big.Rat{}).Add((&big.Rat{}).Mul(big.NewRat(2, 1), (&big.Rat{}).Mul(x0, y0)), bigY)
+		x0 = xtemp
+		n++
 	}
 
-	return color.RGBA{255, 255, 255, 255}
+	return palette[n%5]
 }
 
 func getAverage(colors []color.RGBA) color.RGBA {

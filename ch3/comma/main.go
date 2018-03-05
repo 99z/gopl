@@ -15,10 +15,25 @@ func main() {
 
 func comma(s string) string {
 	var buf bytes.Buffer
+	var decimal string
+
+	if (s[0] == '+' || s[0] == '-') {
+		buf.WriteByte(s[0])
+		s = s[1:]
+	}
+
 	n := len(s)
 	if n <= 3 {
 		buf.WriteString(s)
 		return buf.String()
+	}
+
+	for i := len(s) - 1; i >= 0; i-- {
+		if s[i] == '.' {
+			decimal = s[i:]
+			s = s[:i]
+			break
+		}
 	}
 
 	for i, v := range s {
@@ -28,6 +43,8 @@ func comma(s string) string {
 
 		buf.WriteRune(v)
 	}
+
+	buf.WriteString(decimal)
 
 	return buf.String()
 }

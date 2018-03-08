@@ -54,7 +54,7 @@ func squashSpacesSinglePass(b []byte) []byte {
 				insertionPtr++
 			} else if count > 0 {
 				if count == 1 {
-					b[insertionPtr - 1] = 32			
+					b[insertionPtr-1] = 32
 				}
 				removedChars++
 			}
@@ -63,6 +63,5 @@ func squashSpacesSinglePass(b []byte) []byte {
 		}
 	}
 
-	return b[:len(b) - removedChars]
+	return b[:len(b)-removedChars]
 }
-	
